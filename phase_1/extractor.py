@@ -4,7 +4,7 @@ import os
 import time
 
 # Open the video file
-video_path = './phase_1/vid3.mp4'
+video_path = './phase_1/vid2.mp4'
 cap = cv2.VideoCapture(video_path)
 
 # Check if the video file was opened successfully
@@ -22,7 +22,7 @@ start=time.time()
 ret, prev_frame = cap.read()
 
 # Convert the frame to a grayscale image for faster comparison
-prev_frame_gray = cv2.cvtColor(prev_frame, cv2.COLOR_BGR2GRAY)
+#prev_frame_gray = cv2.cvtColor(prev_frame, cv2.COLOR_BGR2GRAY)
 
 frames.append(prev_frame)
 
@@ -34,16 +34,17 @@ while True:
     break
 
  # Convert the frame to grayscale for comparison
-  frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+  #frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
  # Calculate the absolute difference between the current and previous frames
-  frame_diff = cv2.absdiff(prev_frame_gray, frame_gray)
-
+ # frame_diff = cv2.absdiff(prev_frame_gray, frame_gray)
+  frame_diff = cv2.absdiff(prev_frame, frame)
  # If the frame is not a duplicate (based on a simple threshold),
  # add it to the list of frames and update the previous frame
-  if np.mean(frame_diff) > 15:
+  if np.mean(frame_diff) > 5:
     frames.append(frame)
-    prev_frame_gray = frame_gray.copy()
+  #  prev_frame_gray = frame_gray.copy()
+    prev_frame = frame.copy()
       
  # Display the frame (optional)
  # cv2.imshow('Frame', frame_gray)
