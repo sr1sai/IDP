@@ -4,7 +4,7 @@ import os
 import time
 import torch
 import torchvision.transforms as transforms
-from PIL import Image
+from PIL import Image,ImageOps
 import subprocess
 
 def extractor(vid_path):
@@ -47,7 +47,7 @@ def extractor(vid_path):
         # add it to the list of frames and update the previous frame
         if np.mean(frame_diff) > 5:
             frames.append(frame)
-            print("\tInserted")
+            print("\tInserted<-")
         #  prev_frame_gray = frame_gray.copy()
             prev_frame = frame.copy()
         else:
@@ -76,50 +76,90 @@ def extractor(vid_path):
 
 
 def check_image_high_resolution(image):
-    if isinstance(image, np.ndarray):
-        return False  # Frames are numpy arrays, so high resolution check is not applicable for video frames
     width, height = image.size
-    threshold_width = 2048
-    threshold_height = 2048
-    if width >= threshold_width or height >= threshold_height:
-        print("Image is already at a high resolution, skipping upscaling.")
+    if width*height > 89280:
         return True
     return False
 
-def enhance_photos(photo_dict):
+def enhance_photos(input_path,photo_dict):
+    
+    extension=""
+    if input_path[len(input_path)-3:]=="mp4":
+        extension=".jpg"
+    #resolution Enhancer    
     lr_folder = 'C:\\Users\\Sri Sai\\OneDrive\\Desktop\\IDP\\ESRGAN\\LR'
+    
     for photo_name, photo in photo_dict.items():
-        input_image = photo
-        print(photo_name,"loaded",end=" ---> ")
-        if check_image_high_resolution(input_image):
+        
+        if isinstance(photo, np.ndarray):
+            input_image = Image.fromarray(cv2.cvtColor(photo, cv2.COLOR_BGR2RGB))  # Convert OpenCV frame to PIL Image
+        else:
+            input_image=photo
+            
+        print(photo_name, "loaded", end=" ---> ")
+
+        if not check_image_high_resolution(input_image):
             print("uploaded")
             # If it's a valid image, save it to the LR folder
-            photo_path = os.path.join(lr_folder, f'{photo_name}.jpg')
-            cv2.imwrite(photo_path, photo)
+            photo_path = os.path.join(lr_folder, f'{photo_name}{extension}')
+            cv2.imwrite(photo_path, photo)  # Saving the image with OpenCV (if needed)
         else:
             print("Failed")
-
-    print("Sub Process execution started")
-    time.sleep(1)
-    # After saving the images, run the command in the terminal
-    process = subprocess.Popen(["python", "C:\\Users\\Sri Sai\\OneDrive\\Desktop\\IDP\\ESRGAN\\test.py"])
-    process.wait()  # This will wait until the subprocess finishes
-    if process.returncode == 0:
-        print("Command executed successfully.")
-    else:
-        print("Command execution failed.")
-    print("------'Phase_2 : The Enhancer' completed -------")
+            photo_path = os.path.join(input_path, f'{photo_name}{extension}')
+            
+            input_image = ImageOps.grayscale(input_image)
+            # Apply histogram equalization to enhance the image's contrast
+            image_with_high_contrast = ImageOps.equalize(input_image)
+            # Convert the PIL Image to a NumPy array
+            image_np = np.array(image_with_high_contrast)
+            cv2.imwrite(photo_path, image_np)
+            print(photo_name, "loaded", end=" ---> Contrast Enhanced\n ")
+            
+    
+    
+    print("Executing subprocess")
+    process = subprocess.Popen("cd C:\\Users\\Sri Sai\\OneDrive\\Desktop\\IDP\\ESRGAN && python test.py", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, error = process.communicate()
+    return_code = process.returncode
+    if return_code==0:
+        print("subprocess executed")
+        source_path="C:\\Users\\Sri Sai\\OneDrive\\Desktop\\IDP\\ESRGAN\\results"
+        destination='./finalcode/input'
+        for filename in os.listdir(input_path):
+            if filename.endswith(".jpg") or filename.endswith(".png"):  # Check for image files
+                file_path = os.path.join(input_path, filename)
+                frame = cv2.imread(file_path)
+                frames[filename] = frame
+    if error:
+        print("Error:", error.decode("utf-8"))
+    print("subprocess executed")
+    
+    print("------'Phase_2 : The Enhancer' completed -------a")
     
 
-vid_path="./finalcode/vid5.mp4"
+input_path="./finalcode/"
+extension=""
+if input_path[len(input_path)-3:]=="mp4":
+    extension=".jpg"
 print("------'Phase_1 : The Extraction' commenced -------")
 time.sleep(1)
 
 ext_start=time.time()
-
 ext_func_start=time.time()
-frames=extractor(vid_path)
+
+if input_path[len(input_path)-3:]=="mp4":
+    frames=extractor(input_path)
+else:
+    frames={}
+    if os.path.exists(input_path):
+        for filename in os.listdir(input_path):
+            if filename.endswith(".jpg") or filename.endswith(".png"):  # Check for image files
+                file_path = os.path.join(input_path, filename)
+                frame = cv2.imread(file_path)
+                frames[filename] = frame
 ext_func_end=time.time()
+
+print(frames.keys())
 
 print("------Extraction completed -------")
 time.sleep(1)
@@ -133,7 +173,7 @@ time.sleep(1)
 cv2.waitKey(0)  # Wait for any key to be pressed to close all frame windows
 cv2.destroyAllWindows()"""
 
-print("------Creating output Foldef -------")
+print("------Creating output Folder -------")
 time.sleep(1)
 
 ext_folder_creating_start=time.time()
@@ -145,33 +185,37 @@ ext_folder_creating_end=time.time()
 print("------ Output Folder Created -------")
 time.sleep(1)
 # Save the frames to the "input" folder
-print("------ Commensing File Upload -------")
+print("------ Commencing File Upload -------")
 time.sleep(1)
 
 ext_file_save_start=time.time()
-video_name = os.path.basename(vid_path).split('.')[0]
+video_name = os.path.basename(input_path).split('.')[0]
+
 for i, frame in frames.items():
     print("Saving",i)
-    frame_filename = os.path.join(output_folder, f'{i}.jpg')
+    frame_filename = os.path.join(output_folder, f'{i}{extension}')
     cv2.imwrite(frame_filename, frame)
 ext_file_save_end=time.time()
 
 print("------'Phase_1 : The Extraction' completed -------")
 time.sleep(1)
 ext_end=time.time()
+
 print("------'Phase_2 : The Enhancer' commenced -------")
 time.sleep(1)
 
+#temp_frames= { "temp_photo":Image.open("./finalcode/comic.png") }
+
 enh_func_start=time.time()
-enhanced_frames=enhance_photos(frames)
+enhanced_frames=enhance_photos(input_path,frames)
 enh_func_end=time.time()
 
 """count=0
-for i, frame in enhanced_frames.items():
-  frame_filename = os.path.join(output_folder, f'{video_name}_frame_00{count}.jpg')
+for i, frame in frames.items():
+  frame_filename = os.path.join(output_folder, f'{video_name}_frame_0{count}{extension}')
   cv2.imwrite(frame_filename, frame)
-  count+=1"""
-
+  count+=1
+"""
 
 #statistics
 print("Extraction Total:",ext_end-ext_start-5)
