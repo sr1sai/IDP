@@ -6,6 +6,7 @@ import torch
 import torchvision.transforms as transforms
 from PIL import Image,ImageOps
 import subprocess
+import shutil
 
 def extractor(vid_path):
     frame_count=1
@@ -121,19 +122,22 @@ def enhance_photos(input_path,photo_dict):
     process = subprocess.Popen("cd C:\\Users\\Sri Sai\\OneDrive\\Desktop\\IDP\\ESRGAN && python test.py", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, error = process.communicate()
     return_code = process.returncode
-    if return_code==0:
-        print("subprocess executed")
-        source_path="C:\\Users\\Sri Sai\\OneDrive\\Desktop\\IDP\\ESRGAN\\results"
-        destination='./finalcode/input'
-        for filename in os.listdir(input_path):
-            if filename.endswith(".jpg") or filename.endswith(".png"):  # Check for image files
-                file_path = os.path.join(input_path, filename)
-                frame = cv2.imread(file_path)
-                frames[filename] = frame
+
+    if return_code == 0:
+        print("Subprocess executed. Transferring files...")
+        source_path = "C:\\Users\\Sri Sai\\OneDrive\\Desktop\\IDP\\ESRGAN\\results"
+        destination = './finalcode/input'
+
+        for filename in os.listdir(source_path):
+            if filename.endswith(".jpg") or filename.endswith(".png"):
+                file_path = os.path.join(source_path, filename)
+                shutil.copy(file_path, destination)
+        
+        print("Files transferred successfully.")
+    
     if error:
         print("Error:", error.decode("utf-8"))
-    print("subprocess executed")
-    
+        
     print("------'Phase_2 : The Enhancer' completed -------a")
     
 
