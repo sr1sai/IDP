@@ -8,6 +8,15 @@ from PIL import Image,ImageOps
 import subprocess
 import shutil
 
+
+def print_hyphens(s,n):
+    print(s,end="<")
+    for _ in range(n-2):
+        print('-', end='', flush=True)  # Print the hyphen without a newline
+        time.sleep(5 / n)  # Pause for 3 seconds divided by the length of hyphens
+    print(">",end="")
+    print()
+
 def extractor(vid_path):
     frame_count=1
     cap = cv2.VideoCapture(vid_path)
@@ -117,8 +126,10 @@ def enhance_photos(input_path,photo_dict):
             print(photo_name, "loaded", end=" ---> Contrast Enhanced\n ")
             
     
-    
-    print("Executing subprocess")
+    print()
+    print("\t------ Executing subprocess -------")
+    print_hyphens("\t",len("------ Executing subprocess -------"))
+    print()
     process = subprocess.Popen("cd C:\\Users\\Sri Sai\\OneDrive\\Desktop\\IDP\\ESRGAN && python test.py", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, error = process.communicate()
     return_code = process.returncode
@@ -137,16 +148,19 @@ def enhance_photos(input_path,photo_dict):
     
     if error:
         print("Error:", error.decode("utf-8"))
-        
-    print("------'Phase_2 : The Enhancer' completed -------a")
+    print()
+    print("\t------ 'Phase_2 : The Enhancer' completed -------")
+    print()
     
 
 input_path="./finalcode/"
 extension=""
 if input_path[len(input_path)-3:]=="mp4":
     extension=".jpg"
-print("------'Phase_1 : The Extraction' commenced -------")
-time.sleep(1)
+print()
+print("\t------ 'Phase_1 : The Extraction' commenced -------")
+print_hyphens("\t",len("------ 'Phase_1 : The Extraction' commenced -------"))
+print()
 
 ext_start=time.time()
 ext_func_start=time.time()
@@ -165,8 +179,10 @@ ext_func_end=time.time()
 
 print(frames.keys())
 
-print("------Extraction completed -------")
+print()
+print("\t------ Extraction completed -------")
 time.sleep(1)
+print()
 
 #checking the frames
 """for frame_name, frame in frames.items():
@@ -177,8 +193,10 @@ time.sleep(1)
 cv2.waitKey(0)  # Wait for any key to be pressed to close all frame windows
 cv2.destroyAllWindows()"""
 
-print("------Creating output Folder -------")
-time.sleep(1)
+print()
+print("\t------ Creating output Folder -------")
+print_hyphens("\t",len("------ Creating output Folder -------"))
+print()
 
 ext_folder_creating_start=time.time()
 output_folder = './finalcode/input'
@@ -186,11 +204,16 @@ if not os.path.exists(output_folder):
   os.makedirs(output_folder)
 ext_folder_creating_end=time.time()
 
-print("------ Output Folder Created -------")
+print()
+print("\t------ Output Folder Created -------")
 time.sleep(1)
+print()
 # Save the frames to the "input" folder
-print("------ Commencing File Upload -------")
-time.sleep(1)
+
+print()
+print("\t------ Commencing File Upload -------")
+print_hyphens("\t",len("------ Commencing File Upload -------"))
+print()
 
 ext_file_save_start=time.time()
 video_name = os.path.basename(input_path).split('.')[0]
@@ -201,12 +224,22 @@ for i, frame in frames.items():
     cv2.imwrite(frame_filename, frame)
 ext_file_save_end=time.time()
 
-print("------'Phase_1 : The Extraction' completed -------")
-time.sleep(1)
 ext_end=time.time()
 
-print("------'Phase_2 : The Enhancer' commenced -------")
+print()
+print("\t------ File Upload completed -------")
 time.sleep(1)
+print()
+
+print()
+print("\t------ 'Phase_1 : The Extraction' completed -------")
+time.sleep(1)
+print()
+
+print()
+print("\t------ 'Phase_2 : The Enhancer' commenced -------")
+print_hyphens("\t",len("------ 'Phase_2 : The Enhancer' commenced -------"))
+print()
 
 #temp_frames= { "temp_photo":Image.open("./finalcode/comic.png") }
 
