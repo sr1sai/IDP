@@ -113,7 +113,7 @@ def enhance_photos(input_path,photo_dict):
             photo_path = os.path.join(lr_folder, f'{photo_name}{extension}')
             cv2.imwrite(photo_path, photo)  # Saving the image with OpenCV (if needed)
         else:
-            print("Failed")
+            print("Failed ---> ",end="")
             photo_path = os.path.join(input_path, f'{photo_name}{extension}')
             
             input_image = ImageOps.grayscale(input_image)
@@ -122,7 +122,7 @@ def enhance_photos(input_path,photo_dict):
             # Convert the PIL Image to a NumPy array
             image_np = np.array(image_with_high_contrast)
             cv2.imwrite(photo_path, image_np)
-            print(photo_name, "loaded", end=" ---> Contrast Enhanced\n ")
+            print("Contrast Enhanced")
             
     
     print()
@@ -157,7 +157,7 @@ def enhance_photos(input_path,photo_dict):
     print()
     
 
-input_path="./finalcode/vid6.mp4"
+input_path="./finalcode/vid3.mp4"
 extension=""
 if input_path[len(input_path)-3:]=="mp4":
     extension=".jpg"
