@@ -8,7 +8,6 @@ from PIL import Image,ImageOps
 import subprocess
 import shutil
 
-
 def print_hyphens(s,n):
     print(s,end="<")
     for _ in range(n-2):
