@@ -140,8 +140,13 @@ def enhance_photos(input_path,photo_dict):
 
         for filename in os.listdir(source_path):
             if filename.endswith(".jpg") or filename.endswith(".png"):
+                
+                new_filename = filename.replace("_rlt", "")
+            
                 file_path = os.path.join(source_path, filename)
-                shutil.copy(file_path, destination)
+                new_file_path = os.path.join(destination, new_filename)
+                
+                shutil.copy(file_path, new_file_path)
         
         print("Files transferred successfully.")
     
@@ -152,7 +157,7 @@ def enhance_photos(input_path,photo_dict):
     print()
     
 
-input_path="./finalcode/"
+input_path="./finalcode/vid6.mp4"
 extension=""
 if input_path[len(input_path)-3:]=="mp4":
     extension=".jpg"
