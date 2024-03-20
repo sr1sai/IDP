@@ -31,7 +31,7 @@ def extractor(vid_path):
 
     # Read the first frame
     ret, prev_frame = cap.read()
-    print("Frame:",frame_count)
+    print("Frame:",frame_count,end="")
     if ret:
         # Convert the frame to a grayscale image for faster comparison
         #prev_frame_gray = cv2.cvtColor(prev_frame, cv2.COLOR_BGR2GRAY)
@@ -39,7 +39,7 @@ def extractor(vid_path):
         print("\tInserted")
     frame_count+=1
     while True:
-        print("Frame:",frame_count)
+        print("Frame:",frame_count,end="")
         ret, frame = cap.read()
 
         # Break the loop when we reach the end of the video
@@ -94,7 +94,7 @@ def enhance_photos(input_path,photo_dict):
     
     extension=""
     if input_path[len(input_path)-3:]=="mp4":
-        extension=".jpg"
+        extension=".jpg"                                                                                                                                                                                                        
     #resolution Enhancer    
     lr_folder = 'C:\\Users\\Sri Sai\\OneDrive\\Desktop\\IDP\\ESRGAN\\LR'
     
@@ -113,7 +113,7 @@ def enhance_photos(input_path,photo_dict):
             photo_path = os.path.join(lr_folder, f'{photo_name}{extension}')
             cv2.imwrite(photo_path, photo)  # Saving the image with OpenCV (if needed)
         else:
-            print("Failed")
+            print("Failed ---> ",end="")
             photo_path = os.path.join(input_path, f'{photo_name}{extension}')
             
             input_image = ImageOps.grayscale(input_image)
@@ -122,7 +122,7 @@ def enhance_photos(input_path,photo_dict):
             # Convert the PIL Image to a NumPy array
             image_np = np.array(image_with_high_contrast)
             cv2.imwrite(photo_path, image_np)
-            print(photo_name, "loaded", end=" ---> Contrast Enhanced\n ")
+            print("Contrast Enhanced")
             
     
     print()
@@ -156,9 +156,9 @@ def enhance_photos(input_path,photo_dict):
     print("\t------ 'Phase_2 : The Enhancer' completed -------")
     print()
     
-
-input_path="./finalcode/vid6.mp4"
-extension=""
+    
+input_path="./finalcode/"
+extension="" 
 if input_path[len(input_path)-3:]=="mp4":
     extension=".jpg"
 print()
